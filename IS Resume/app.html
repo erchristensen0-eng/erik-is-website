@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Provo Adventure Generator</title>
+  <meta name="description" content="Generate a Provo/Utah Valley adventure plan by vibe, budget, and time. Save favorites. Single-page web app." />
+  <style>
+    :root{
+      --bg: #070712;
+      --panel: rgba(255,255,255,.06);
+      --line: rgba(255,255,255,.12);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --neon1: #22c55e;
+      --neon2: #a855f7;
+      --neon3: #06b6d4;
+      --radius: 18px;
+      --shadow: 0 20px 60px rgba(0,0,0,.55);
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(900px 500px at 15% 0%, rgba(168,85,247,.18), transparent 60%),
+        radial-gradient(900px 500px at 85% 0%, rgba(34,197,94,.16), transparent 60%),
+        radial-gradient(900px 500px at 50% 100%, rgba(6,182,212,.14), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    a{ color: var(--neon3); text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    .wrap{ width: min(1100px, calc(100% - 32px)); margin: 0 auto; }
+
+    header{
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(7,7,18,.82);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    .bar{
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 0; gap: 12px; flex-wrap: wrap;
+    }
+    .brand{
+      display: inline-flex; align-items: center; gap: 10px;
+      font-weight: 900; letter-spacing: .3px;
+    }
+    .dot{
+      width: 14px; height: 14px; border-radius: 5px;
+      background: linear-gradient(135deg, var(--neon2), var(--neon1));
+      box-shadow: 0 0 20px rgba(168,85,247,.35);
+    }
+    .nav{
+      display: flex; gap: 10px; flex-wrap: wrap;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    main{ padding: 26px 0 44px 0; }
+
+    .grid{
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+      align-items: start;
+    }
+    @media (max-width: 950px){ .grid{ grid-template-columns: 1fr; } }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .head{
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+    }
+    .head h1, .head h2{ margin: 0; font-size: 1.15rem; }
+    .body{ padding: 16px; }
+
+    .hint{ color: var(--muted); font-size: .92rem; margin: 6px 0 0 0; }
+
+    label{ display: block; font-weight: 800; margin: 0 0 6px 0; }
+    select, input{
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      outline: none;
+    }
+    select:focus, input:focus{
+      border-color: rgba(6,182,212,.55);
+    }
+    .row{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 700px){ .row{ grid-template-columns: 1fr; } }
+
+    .actions{ display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    button{
+      cursor: pointer;
+      border-radius: 999px;
+      border: 1px solid rgba(6,182,212,.45);
+      background: rgba(6,182,212,.14);
+      color: var(--text);
+      font-weight: 900;
+      padding: 10px 14px;
+    }
+    button.alt{
+      border-color: rgba(168,85,247,.45);
+      background: rgba(168,85,247,.14);
+    }
+    button.ghost{
+      border-color: var(--line);
+      background: transparent;
+      color: rgba(255,255,255,.9);
+    }
+    button:disabled{ opacity: .55; cursor: not-allowed; }
+
+    .step{
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.22);
+      border-radius: 16px;
+      padding: 12px 12px;
+      margin-top: 12px;
+    }
+    .step h3{ margin: 0; font-size: 1.02rem; }
+    .step p{ margin: 8px 0 0 0; color: rgba(255,255,255,.86); }
+    .meta{ margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap; color: var(--muted); font-size: .92rem; }
+
+    .pill{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: .85rem;
+      color: rgba(255,255,255,.86);
+    }
+
+    ul{ margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+    .item{
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      border-radius: 16px;
+      padding: 12px;
+    }
+    .item strong{ display:block; }
+    .item .small{ color: var(--muted); font-size: .92rem; margin-top: 4px; }
+
+    .footer{
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: .92rem;
+      display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap bar">
+      <div class="brand"><span class="dot" aria-hidden="true"></span> Provo Adventure Generator</div>
+      <div class="nav">
+        <a href="index.html">Outdoor Site</a>
+        <a href="resume.html">Résumé</a>
+        <a href="scratch.html">Scratch Page</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <section class="card">
+        <div class="head">
+          <h1>Filters</h1>
+          <div class="pill">Single-page app</div>
+        </div>
+        <div class="body">
+          <div class="row">
+            <div>
+              <label for="vibe">Vibe</label>
+              <select id="vibe">
+                <option value="any" selected>Any</option>
+                <option value="outdoors">Outdoors</option>
+                <option value="date">Date Night</option>
+                <option value="chill">Chill</option>
+                <option value="active">Active</option>
+                <option value="creative">Creative</option>
+                <option value="food">Food/Treats</option>
+              </select>
+            </div>
+            <div>
+              <label for="budget">Budget</label>
+              <select id="budget">
+                <option value="any" selected>Any</option>
+                <option value="free">Free</option>
+                <option value="cheap">$</option>
+                <option value="moderate">$$</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:12px;">
+            <div>
+              <label for="time">Time Available</label>
+              <select id="time">
+                <option value="any" selected>Any</option>
+                <option value="45">30–60 min</option>
+                <option value="90">1–2 hours</option>
+                <option value="180">2–4 hours</option>
+              </select>
+            </div>
+            <div>
+              <label for="weather">Weather</label>
+              <select id="weather">
+                <option value="any" selected>Any</option>
+                <option value="good">Good weather</option>
+                <option value="bad">Bad weather</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;">
+            <label for="avoid">Avoid (optional)</label>
+            <input id="avoid" type="text" placeholder="e.g., hiking, ice cream, crowds" />
+            <p class="hint">Comma-separated keywords. We’ll try to avoid matching items.</p>
+          </div>
+
+          <div class="actions">
+            <button id="gen">Generate</button>
+            <button id="reroll" class="ghost" disabled>Re-roll</button>
+            <button id="fav" class="alt" disabled>Save Favorite</button>
+          </div>
+
+          <div class="footer">
+            <span>Uses localStorage for favorites</span>
+            <span>Maps links included</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="head">
+          <h2>Your Plan</h2>
+          <div class="pill" id="status">Not generated</div>
+        </div>
+        <div class="body" id="planArea">
+          <p class="hint">Click <strong>Generate</strong> to create a 3-part plan.</p>
+        </div>
+
+        <div class="head">
+          <h2>Favorites</h2>
+          <div class="pill" id="favCount">0</div>
+        </div>
+        <div class="body">
+          <ul id="favList"></ul>
+          <p class="hint" id="favHint">No favorites yet.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // ===== DATA (edit/add items to make it uniquely yours) =====
+    const DATA = [
+      { type:"activity", name:"Bridal Veil Falls walk + photos", place:"Bridal Veil Falls Provo Canyon", budget:"free", weather:"good", minutes:60, vibes:["outdoors","chill","date","creative"] },
+      { type:"activity", name:"Provo River Trail walk or bike", place:"Provo River Trail", budget:"free", weather:"good", minutes:90, vibes:["outdoors","active","chill","date"] },
+      { type:"activity", name:"Hike the Y (sunset)", place:"Y Mountain Trailhead Provo", budget:"free", weather:"good", minutes:120, vibes:["outdoors","active","date"] },
+      { type:"activity", name:"Rock Canyon quick hike", place:"Rock Canyon Trailhead Provo", budget:"free", weather:"good", minutes:90, vibes:["outdoors","active"] },
+      { type:"activity", name:"Sundance village stroll", place:"Sundance Mountain Resort", budget:"moderate", weather:"good", minutes:180, vibes:["outdoors","date","chill"] },
+      { type:"activity", name:"Thrift + style challenge", place:"Thrift store Provo", budget:"cheap", weather:"any", minutes:90, vibes:["creative","date","friends","chill"] },
+
+      { type:"food", name:"Ice cream stop", place:"Rockwell Ice Cream Co Provo", budget:"cheap", weather:"any", minutes:30, vibes:["food","date","friends","family","chill"] },
+      { type:"food", name:"Dirty soda run", place:"Swig Provo", budget:"cheap", weather:"any", minutes:30, vibes:["food","date","friends","chill"] },
+      { type:"food", name:"Hot chocolate café moment", place:"Cafe in Downtown Provo", budget:"cheap", weather:"bad", minutes:45, vibes:["food","chill","date","creative"] },
+      { type:"food", name:"Downtown dinner", place:"Downtown Provo", budget:"moderate", weather:"any", minutes:60, vibes:["food","date","friends"] },
+
+      { type:"bonus", name:"Photo challenge: 10-shot theme", place:"Downtown Provo", budget:"free", weather:"any", minutes:45, vibes:["creative","date","friends","outdoors"] },
+      { type:"bonus", name:"Sunset lookout + one playlist", place:"Provo Canyon overlook", budget:"free", weather:"good", minutes:45, vibes:["chill","date","outdoors"] },
+      { type:"bonus", name:"Dessert taste test", place:"Grocery store dessert aisle", budget:"cheap", weather:"any", minutes:30, vibes:["food","friends","family","date"] },
+      { type:"bonus", name:"Random kindness mission", place:"Near you", budget:"free", weather:"any", minutes:30, vibes:["chill","friends","family","date"] }
+    ];
+
+    // ===== Helpers =====
+    const $ = (s) => document.querySelector(s);
+    const maps = (place) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place)}`;
+    const avoidWords = (text) => text.split(",").map(x=>x.trim().toLowerCase()).filter(Boolean);
+
+    function scoreItem(it, prefs){
+      let s = 1;
+
+      if (prefs.vibe !== "any") s += it.vibes.includes(prefs.vibe) ? 4 : -2;
+      if (prefs.budget !== "any") s += (it.budget === prefs.budget) ? 3 : -1.5;
+
+      if (prefs.weather !== "any") {
+        if (it.weather === "any") s += 0.5;
+        s += (it.weather === prefs.weather) ? 2.5 : -2;
+      }
+
+      if (prefs.time !== "any") {
+        const t = Number(prefs.time);
+        const dist = Math.abs(it.minutes - t);
+        s += Math.max(-2, 2.2 - dist / 60);
+      }
+
+      return Math.max(0.05, s);
+    }
+
+    function pickWeighted(items, prefs, avoid){
+      const pool = items
+        .filter(it => !avoid.some(w => (it.name + " " + it.place).toLowerCase().includes(w)))
+        .map(it => ({ it, w: scoreItem(it, prefs) }));
+
+      const total = pool.reduce((a,x)=>a+x.w,0);
+      if (!pool.length || total <= 0) return null;
+
+      let r = Math.random() * total;
+      for (const x of pool){
+        r -= x.w;
+        if (r <= 0) return x.it;
+      }
+      return pool[pool.length - 1].it;
+    }
+
+    function prefs(){
+      return {
+        vibe: $("#vibe").value,
+        budget: $("#budget").value,
+        time: $("#time").value,
+        weather: $("#weather").value,
+        avoid: $("#avoid").value || ""
+      };
+    }
+
+    function buildPlan(){
+      const p = prefs();
+      const a = avoidWords(p.avoid);
+
+      const activity = pickWeighted(DATA.filter(x=>x.type==="activity"), p, a);
+      const food = pickWeighted(DATA.filter(x=>x.type==="food"), p, a);
+      const bonus = pickWeighted(DATA.filter(x=>x.type==="bonus"), p, a);
+
+      return { activity, food, bonus, prefs: p, createdAt: new Date().toISOString() };
+    }
+
+    function planId(plan){
+      return [plan.activity?.name, plan.food?.name, plan.bonus?.name].join("||");
+    }
+
+    // ===== Favorites storage =====
+    const KEY = "provo_adventure_favs_v1";
+    function loadFavs(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; } }
+    function saveFavs(list){ localStorage.setItem(KEY, JSON.stringify(list)); }
+
+    function renderFavs(){
+      const list = loadFavs();
+      $("#favCount").textContent = String(list.length);
+      const ul = $("#favList");
+      ul.innerHTML = "";
+      $("#favHint").style.display = list.length ? "none" : "block";
+
+      list.forEach((p, i) => {
+        const li = document.createElement("li");
+        li.className = "item";
+        li.innerHTML = `
+          <strong>${p.activity.name}</strong>
+          <div class="small">${p.food.name} • ${p.bonus.name}</div>
+          <div class="small"><a target="_blank" rel="noopener" href="${maps(p.activity.place)}">Maps →</a></div>
+          <div class="small"><button class="ghost" data-del="${i}">Remove</button></div>
+        `;
+        ul.appendChild(li);
+      });
+
+      ul.querySelectorAll("button[data-del]").forEach(btn=>{
+        btn.addEventListener("click", (e)=>{
+          const i = Number(e.currentTarget.dataset.del);
+          const list = loadFavs();
+          list.splice(i,1);
+          saveFavs(list);
+          renderFavs();
+        });
+      });
+    }
+
+    // ===== UI =====
+    let CURRENT = null;
+
+    function renderPlan(plan){
+      const area = $("#planArea");
+      const tag = $("#status");
+      if (!plan.activity || !plan.food || !plan.bonus){
+        area.innerHTML = `<p class="hint">Not enough matching items. Try broader filters.</p>`;
+        tag.textContent = "Try broader filters";
+        return;
+      }
+
+      area.innerHTML = `
+        <div class="step">
+          <h3>Step 1: ${plan.activity.name}</h3>
+          <p>Place: <a target="_blank" rel="noopener" href="${maps(plan.activity.place)}">${plan.activity.place}</a></p>
+          <div class="meta">
+            <span class="pill">${plan.activity.budget}</span>
+            <span class="pill">${plan.activity.weather}</span>
+            <span class="pill">${plan.activity.minutes} min</span>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3>Step 2: ${plan.food.name}</h3>
+          <p>Place: <a target="_blank" rel="noopener" href="${maps(plan.food.place)}">${plan.food.place}</a></p>
+          <div class="meta">
+            <span class="pill">${plan.food.budget}</span>
+            <span class="pill">${plan.food.weather}</span>
+            <span class="pill">${plan.food.minutes} min</span>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3>Step 3: ${plan.bonus.name}</h3>
+          <p>Place: <a target="_blank" rel="noopener" href="${maps(plan.bonus.place)}">${plan.bonus.place}</a></p>
+          <div class="meta">
+            <span class="pill">${plan.bonus.budget}</span>
+            <span class="pill">${plan.bonus.weather}</span>
+            <span class="pill">${plan.bonus.minutes} min</span>
+          </div>
+        </div>
+
+        <p class="hint">Prefs: vibe=${plan.prefs.vibe}, budget=${plan.prefs.budget}, time=${plan.prefs.time}, weather=${plan.prefs.weather}</p>
+      `;
+
+      tag.textContent = "Plan ready";
+      $("#reroll").disabled = false;
+      $("#fav").disabled = false;
+    }
+
+    $("#gen").addEventListener("click", ()=>{
+      CURRENT = buildPlan();
+      renderPlan(CURRENT);
+    });
+
+    $("#reroll").addEventListener("click", ()=>{
+      CURRENT = buildPlan();
+      renderPlan(CURRENT);
+    });
+
+    $("#fav").addEventListener("click", ()=>{
+      if (!CURRENT) return;
+      const list = loadFavs();
+      const id = planId(CURRENT);
+      if (list.some(x => planId(x) === id)) return;
+      list.unshift(CURRENT);
+      list.splice(12);
+      saveFavs(list);
+      renderFavs();
+    });
+
+    renderFavs();
+  </script>
+</body>
+</html>

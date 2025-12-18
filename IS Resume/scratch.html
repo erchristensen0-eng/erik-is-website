@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scratch Page | Outdoor Adventures</title>
+  <link rel="stylesheet" href="scratch.css" />
+</head>
+<body>
+  <header class="banner">
+    <div class="box">
+      <h1>Scratch Page: Outdoor Adventures</h1>
+      <p>This page is intentionally “from-scratch” and shows required HTML/CSS skills.</p>
+      <nav class="nav">
+        <a href="index.html">Back to Professional Site</a>
+        <a href="resume.html">Résumé</a>
+        <a href="app.html">Web App</a>
+        <a href="#anchor-demo">Jump to Anchor Demo</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- DIV 1 -->
+    <div class="panel">
+      <h2>Nested list requirement</h2>
+      <p>Ordered list with an unordered list embedded inside:</p>
+
+      <ol>
+        <li>Choose the vibe
+          <ul>
+            <li>Chill + scenic</li>
+            <li>Active + views</li>
+            <li>Photo mission</li>
+          </ul>
+        </li>
+        <li>Pick the spot</li>
+        <li>Bring one thing that makes it fun (treat, playlist, camera)</li>
+      </ol>
+    </div>
+
+    <!-- DIV 2 -->
+    <div class="panel">
+      <h2>YouTube embed requirement</h2>
+      <p>Replace the video ID with any YouTube link you want.</p>
+
+      <!-- HOW TO SWAP THE VIDEO:
+           If your YouTube link is: https://www.youtube.com/watch?v=abcdef12345
+           Then use: https://www.youtube.com/embed/abcdef12345 -->
+      <div class="video">
+        <iframe
+          width="560"
+          height="315"
+          src="https://www.youtube.com/embed/N9Amb41jYFo"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <p class="small">
+        Example video is a placeholder. Swap it with a hiking/outdoor safety or Provo Canyon video.
+      </p>
+    </div>
+
+    <!-- DIV 3 -->
+    <div class="panel" id="anchor-demo">
+      <h2>On-page anchor requirement</h2>
+      <p>You just used an on-page anchor to jump here. ✅</p>
+
+      <h3>Image requirement</h3>
+      <p>Add at least one image that is NOT from a theme. Use your own photo or a free one.</p>
+
+      <!-- IMAGE HOW-TO:
+           1) Put an image file in /images/ called trail.jpg
+           2) Then uncomment the <img> tag below -->
+      <!-- <img class="photo" src="images/trail.jpg" alt="Trail photo in Utah Valley"> -->
+
+      <p class="small">
+        Photo suggestions to search: “Provo Canyon trail”, “Bridal Veil Falls”, “Utah mountains sunset”.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h2>Live Tableau embed requirement</h2>
+      <p>
+        This must be an interactive Tableau embed (not a screenshot).
+        Paste your Tableau “Share” embed code in the placeholder below.
+      </p>
+
+      <!-- TABLEAU HOW-TO:
+           1) Open a Tableau visualization on Tableau Public
+           2) Click Share
+           3) Copy the EMBED code
+           4) Paste it right here (replace the placeholder div) -->
+      <div class='tableauPlaceholder' id='viz1766018595433' style='position: relative'><noscript><a href='#'><img alt='Dashboard 1 ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;De&#47;De-stressintheGreatOutdoors&#47;Dashboard1&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='embed_code_version' value='3' /> <param name='site_root' value='' /><param name='name' value='De-stressintheGreatOutdoors&#47;Dashboard1' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;De&#47;De-stressintheGreatOutdoors&#47;Dashboard1&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='language' value='en-US' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1766018595433');                    var vizElement = divElement.getElementsByTagName('object')[0];                    if ( divElement.offsetWidth > 800 ) { vizElement.style.width='800px';vizElement.style.height='927px';} else if ( divElement.offsetWidth > 500 ) { vizElement.style.width='800px';vizElement.style.height='927px';} else { vizElement.style.width='100%';vizElement.style.height='727px';}                     var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
+    </div>
+
+    <div class="panel">
+      <h2>Link to the web app</h2>
+      <p>This is required: the web app must be accessible from the scratch page.</p>
+      <a class="biglink" href="app.html">Open the Provo Adventure Generator →</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Scratch page complete: nested list, YouTube embed, anchor, custom background, external CSS, div layout, Tableau embed spot.</p>
+  </footer>
+</body>
+</html>
